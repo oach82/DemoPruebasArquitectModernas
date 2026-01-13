@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+  db-service:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+      POSTGRES_DB: banking
+    ports:
+      - "5432:5432"
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db-service
+
+  transfer-service:
+    build: ./transfer-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db-service
+
+  jenkins:
+    build: ./jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    volumes:
+      - ./:/workspace
+      - ./tests:/var/jenkins_home/workspace/BankingLabPipeline/tests
+
+  zap:
+    build: ./zap-local
+    container_name: zap
+    command: >
+      zap.sh -daemon
+      -host 0.0.0.0
+      -port 8083
+      -config api.disablekey=true
+      -config api.addrs.addr.name=.*
+      -config api.addrs.addr.regex=true
+    ports:
+      - "8083:8083"
