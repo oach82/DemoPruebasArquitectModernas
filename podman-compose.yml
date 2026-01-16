@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   db-service:
-    image: postgres:15
+    image: docker.io/library/postgres:15
     environment:
       POSTGRES_USER: bankuser
       POSTGRES_PASSWORD: bankpass

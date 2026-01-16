@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:lts
+FROM docker.io/jenkins/jenkins:lts
 
 # Usar root para instalar dependencias
 USER root
